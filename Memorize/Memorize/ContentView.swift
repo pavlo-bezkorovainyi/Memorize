@@ -8,14 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
-  var emojis = ["🚂", "🚀", "🚁", "🚜", "🚌", "🛴", "🚛", "🚑", "🚗", "🚕", "🚙", "🚎", "🚓", "🛩", "🛸", "🌁"]
-  @State var emojiCount = 15
+  var vehiclesEmojis = ["🚂", "🚀", "🚁", "🚜", "🚌", "🛴", "🚛", "🚑", "🚗", "🚕", "🚙", "🚎", "🚓", "🛩", "🛸", "🌁"]
+  var foodEmojis = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦"]
+  var ballsEmojis = ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱"]
+  @State var emojis: [String] = [""]
   
   var body: some View {
     VStack {
+      Text("Memorize!")
+        .font(.largeTitle)
       ScrollView{
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 65, maximum: 100))]) {
-          ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
+          ForEach(emojis[0..<emojis.count], id: \.self) { emoji in
             CardView(content: emoji)
               .aspectRatio(2/3, contentMode: .fit)
           }
@@ -23,32 +27,48 @@ struct ContentView: View {
       }
       .foregroundColor(.red)
       Spacer()
-      HStack {
-        remove
-        Spacer()
-        add
+      HStack(spacing: 45) {
+        vehicleThemeButton
+        foodThemeButton
+        ballsThemeButton
       }
-      .font(.largeTitle)
-      .padding(.horizontal)
     }
     .padding(.horizontal)
+    .onAppear(perform: {
+      emojis = vehiclesEmojis
+    })
   }
   
-  var add: some View {
+  var vehicleThemeButton: some View {
     Button {
-      guard emojiCount < emojis.count else { return }
-      emojiCount += 1
+      emojis = vehiclesEmojis.shuffled()
     } label: {
-      Image(systemName: "plus.circle")
+      VStack{
+        Image(systemName: "car").font(.largeTitle)
+        Text("Vehicles").font(.custom("Avenir", fixedSize: 17))
+      }
     }
   }
   
-  var remove: some View {
+  var foodThemeButton: some View {
     Button {
-      guard emojiCount > 1 else { return }
-      emojiCount -= 1
+      emojis = foodEmojis.shuffled()
     } label: {
-      Image(systemName: "minus.circle")
+      VStack {
+        Image(systemName: "applelogo").font(.largeTitle)
+        Text("Food").font(.custom("Avenir", fixedSize: 17))
+      }
+    }
+  }
+  
+  var ballsThemeButton: some View {
+    Button {
+      emojis = ballsEmojis.shuffled()
+    } label: {
+      VStack {
+        Image(systemName: "b.circle").font(.largeTitle)
+        Text("Balls").font(.custom("Avenir", fixedSize: 17))
+      }
     }
   }
   
@@ -87,8 +107,6 @@ struct CardView: View {
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
     Group {
-      ContentView()
-        .preferredColorScheme(.dark)
       ContentView()
         .preferredColorScheme(.dark)
     }
