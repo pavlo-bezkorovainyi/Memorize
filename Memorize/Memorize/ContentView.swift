@@ -9,11 +9,18 @@ import SwiftUI
 
 struct ContentView: View {
   @ObservedObject var viewModel: EmojiMemoryGame
-  
+
   var body: some View {
     VStack {
       Text("Memorize!")
         .font(.largeTitle)
+      HStack {
+        Text(viewModel.theme.name)
+          .font(.custom("Avenir", size: 30))
+        Spacer()
+        Text("Score: \(viewModel.score)")
+      }
+      .padding()
       ScrollView {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 65, maximum: 100))]) {
           ForEach(viewModel.cards) { card in
@@ -23,12 +30,29 @@ struct ContentView: View {
                 viewModel.choose(card)
               }
           }
+          .padding(1)
         }
       }
-      .foregroundColor(.red)
+      .foregroundColor(viewModel.theme.color)
       .padding(.horizontal)
+      VStack {
+        themeMenu
+      }
     }
   }
+  
+    var themeMenu: some View {
+      Menu ("Choose Theme") {
+        ForEach(Theme.allCases) { theme in
+          Button {
+            viewModel.theme = theme
+          } label: {
+            Text(theme.name)
+          }
+        }
+      }
+    }
+  
 }
 
 

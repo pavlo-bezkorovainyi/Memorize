@@ -11,6 +11,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
   private(set) var cards: Array<Card>
   
   private var indexOfTheOneAndOnlyFaceUpCard: Int?
+  private(set) var score: Int = 0
   
   mutating func choose(_ card: Card) {
     if let chosenIndex = cards.firstIndex(where: {$0.id == card.id}),
@@ -20,6 +21,9 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         if cards[chosenIndex].content == cards[potentialMatchIndex].content {
           cards[chosenIndex].isMatched = true
           cards[potentialMatchIndex].isMatched = true
+          score += 2
+        } else {
+          score -= 1
         }
         indexOfTheOneAndOnlyFaceUpCard = nil
       } else {

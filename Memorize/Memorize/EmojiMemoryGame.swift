@@ -8,21 +8,39 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
-  static let emojis = ["🚂", "🚀", "🚁", "🚜", "🚌", "🛴", "🚛", "🚑", "🚗", "🚕", "🚙", "🚎", "🚓", "🛩", "🛸", "🌁"]
-  ////  var vehiclesEmojis = ["🚂", "🚀", "🚁", "🚜", "🚌", "🛴", "🚛", "🚑", "🚗", "🚕", "🚙", "🚎", "🚓", "🛩", "🛸", "🌁"]
-  ////  var foodEmojis = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦"]
-  ////  var ballsEmojis = ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱"]
+  @Published private var model: MemoryGame<String>
   
-  static func createMemoryGame() -> MemoryGame<String> {
-    MemoryGame<String>(numberOfPairsOfCards: 3) { pairIndex in
+  dynamic var theme: Theme {
+    willSet {
+      model = recreateMemoryGame(with: newValue)
+    }
+  }
+  
+  var cards: Array<MemoryGame<String>.Card> {
+    model.cards
+  }
+  
+  var score: Int {
+    model.score
+  }
+  
+  init() {
+    self.theme = Theme.allCases.randomElement()!
+    let numberOfCards = theme.numberPairOfCards
+    let emojis = theme.emojis
+    
+    self.model = MemoryGame<String>(numberOfPairsOfCards: numberOfCards) { pairIndex in
       emojis[pairIndex]
     }
   }
   
-  @Published private var model: MemoryGame<String> = createMemoryGame()
-  
-  var cards: Array<MemoryGame<String>.Card> {
-    model.cards
+  private func recreateMemoryGame(with theme: Theme) -> MemoryGame<String> {
+    let numberOfCards = theme.numberPairOfCards
+    let emojis = theme.emojis
+    
+   return MemoryGame<String>(numberOfPairsOfCards: numberOfCards) { pairIndex in
+      emojis[pairIndex]
+    }
   }
   
   //MARK: - Intent(s)
